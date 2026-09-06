@@ -1,0 +1,261 @@
+
+getgenv().OgHungerNewSpawner = nil 
+
+function light(tim,color0,color1)
+	local tweenservice = game:GetService("TweenService")
+	local info = TweenInfo.new(tim,Enum.EasingStyle.Linear)
+	for _ , light in pairs(game.Workspace.CurrentRooms:GetDescendants()) do
+		if light:IsA("Light") or light:IsA("SurfaceLight") or light:IsA("SpotLight") then
+			local target = {Color = color1}
+			local anim = tweenservice:Create(light,info,target)
+			anim:Play()
+		end
+		if light:IsA("MeshPart") and light.Material == Enum.Material.Neon and light.Name ~= "Skybox" then
+			local target1 = {Color = color0}
+			local anim2 = tweenservice:Create(light,info,target1)
+			anim2:Play()
+		end
+	end
+end
+
+local success, Spawner = pcall(function()
+	return loadstring(game:HttpGet("https://raw.githubusercontent.com/eoyoustme/Mayhem-Remake/refs/heads/main/OgHungerNewSpawner"))()
+end)
+
+if not success or not Spawner then
+	return
+end
+
+local entity = Spawner:Create({
+	Entity = {
+		Name = "Wh1t3",
+		Asset = "https://github.com/eoyoustme/Impossible-Remake/blob/main/Wh1t3.rbxm?raw=true",
+		HeightOffset = -1
+	},
+	Lights = {
+		Flicker = {
+			Enabled = false,
+			Duration = 1
+		},
+		Shatter = true,
+		Repair = false
+	},
+	Earthquake = {
+		Enabled = false
+	},
+	Spawned = {
+		ChangeColorWhenSpawn = false, 
+		Rainbow = false,             
+		Color = Color3.fromRGB(0, 85, 255)
+	},
+	CameraShake = {
+		Enabled = true,
+		Range = 100,
+		Values = {3, 30, 0.1, 1}
+	},
+
+	Movement = {
+		Speed = 500,
+		SpeedFast = 700,                  
+		MoveFastNotEnter = true,            
+		Delay = 7,
+		Reversed = false,                  
+		EndWhenEnterLatestRoom = true,   
+		EndDelay = 0,
+
+		ReboundMoving = false,          
+		TweenSecond = 1.5,   
+
+		ReboundMoveStyle = false,      
+		ReboundStyleTimes = 5,        
+		ReboundStyleSound = "rbxassetid://123981238948", 
+		ReboundStyleVolume = 5,
+		ReboundStyleDelay = 2, 
+		IsMoveBackWardAndMore = true,
+
+		FasterAndFaster = 1,
+
+		Fakeout = {
+			Enabled = true,
+			RandomFakeout = true,
+			EndSound = "rbxassetid://130994177179386",
+			EndDelay = 0,
+			SpeedMultiplier = 1
+		},
+
+		ChasePlayerWhenSee = false,
+		SpeedWhenChase = 35
+	},
+
+	Jumpscare = {
+		Enabled = true,
+		Image1 = "rbxassetid://128193561813617", 
+		Image2 = "rbxassetid://128193561813617",
+		Sound1 = "rbxassetid://0", 
+		Sound2 = "rbxassetid://5263560896", 
+		Tease = {
+			[1] = false,
+			Min = 1,
+			Max = 1
+		},
+		Flashing = {
+			[1] = true,
+			[2] = Color3.fromRGB(0, 0, 166)
+		},
+		Shake = true
+	},
+	Rebounding = {
+		Enabled = true,
+		Type = "Ambush",
+		Min = 1,
+		Max = 2,
+		Delay = 0
+	},
+	Damage = {
+		Enabled = true,
+		KillOnMove = false,            
+		Range = 40,
+		Cooldown = 0.2,
+		Amount = 1000,
+		IgnoreHiding = false,
+
+		JumpscareRipper = {
+			Enabled = false,
+			TargetPartName = "Ripe",
+			AttachmentName = "ripe",
+			ParticleName = "ParticleEmitter",
+			ParticleTexture = "rbxassetid://12737595583",
+			SoundUrl = "https://github.com/eoyoustme/back/raw/main/Kill_with_static.mp3",
+			SlamSoundId = "rbxassetid://0",
+			EndSoundId = "rbxassetid://4988621968",
+			Images = {
+				"rbxassetid://8482795900",
+				"rbxassetid://236542974",
+				"rbxassetid://184251462",
+				"rbxassetid://236777652"
+			},
+			FlashDuration = 1.6
+		}
+	},
+	Crucifixion = {
+		Enabled = true,
+		Range = 40,
+		Resist = false,
+		Break = true
+	},
+	Death = {
+		Type = "Guiding",
+		Hints = {"You Die to Wh1t3", "When the light turn to Red and A Scream", "is when he spawn", "he Is Very Dangerous because he is super fast"},
+		Cause = "Wh1t3"
+	}
+})
+
+entity:SetCallback("OnSpawned", function()
+	local entity = workspace.Wh1t3.RushNew
+	entity.Position = Vector3.new(0, 0, 0) 
+
+	game.Lighting.MainColorCorrection.TintColor = Color3.fromRGB(255, 0, 0)
+	game.Lighting.MainColorCorrection.Contrast = 1
+	local tween = game:GetService("TweenService")
+	tween:Create(game.Lighting.MainColorCorrection, TweenInfo.new(2.5), {Contrast = 0}):Play()
+	local TweenService = game:GetService("TweenService")
+	local TW = TweenService:Create(game.Lighting.MainColorCorrection, TweenInfo.new(50),{TintColor = Color3.fromRGB(255, 255, 255)})
+	TW:Play()
+
+	light(2,Color3.fromRGB(66, 0, 0),Color3.fromRGB(100, 0, 0))
+
+	local CameraShaker = require(game.ReplicatedStorage.CameraShaker)
+	local camara = game.Workspace.CurrentCamera
+	local camShake = CameraShaker.new(Enum.RenderPriority.Camera.Value, function(shakeCf)
+		camara.CFrame = camara.CFrame * shakeCf
+	end)
+	camShake:Start()
+	camShake:ShakeOnce(20,10,0,4,0.2,0.2)
+end)
+
+entity:SetCallback("OnStartMoving", function()
+
+end)
+
+entity:SetCallback("OnReachNode", function(node: BasePart)
+
+end)
+
+entity:SetCallback("OnEnterRoom", function(room: Model, firstTime: boolean)
+
+end)
+
+entity:SetCallback("OnNotReachedLatestRoom", function(room: Model, latestRoom: Model)
+
+end)
+
+entity:SetCallback("OnReachedLatestRoom", function(room: Model)
+
+end)
+
+entity:SetCallback("OnLeftLatestRoom", function(room: Model)
+
+end)
+
+entity:SetCallback("OnLookAt", function(lineOfSight: boolean)
+	local FPS = 5
+	local clock = tick()
+	while clock + 1 / FPS > tick() do end
+	wait()
+	clock = tick()
+end)
+
+entity:SetCallback("OnRebounding", function(startOfRebound: boolean)
+	local CameraShaker = require(game.ReplicatedStorage.CameraShaker)
+	local camara = game.Workspace.CurrentCamera
+	local camShake = CameraShaker.new(Enum.RenderPriority.Camera.Value, function(shakeCf)
+		camara.CFrame = camara.CFrame * shakeCf
+	end)
+	camShake:Start()
+	camShake:ShakeOnce(30,16.5,0.1,0.5,0.1,0.5)
+
+	local sound5 = Instance.new("Sound")
+	sound5.SoundId = "rbxassetid://99570778660066"
+	sound5.Volume = 1
+	sound5.PlaybackSpeed = 1
+	sound5.Parent = workspace
+	sound5:Play()
+end)
+entity:SetCallback("OnFakeoutStart", function()
+
+end)
+
+entity:SetCallback("OnFakeoutEnd", function()
+	local CameraShaker = require(game.ReplicatedStorage.CameraShaker)
+	local camara = game.Workspace.CurrentCamera
+	local camShake = CameraShaker.new(Enum.RenderPriority.Camera.Value, function(shakeCf)
+		camara.CFrame = camara.CFrame * shakeCf
+	end)
+	camShake:Start()
+	camShake:ShakeOnce(3,60,0.1,2,2,0.5)
+end)
+
+entity:SetCallback("PlayerGetSee", function()
+
+end)
+
+entity:SetCallback("EndWhenGO", function()
+
+end)
+
+entity:SetCallback("OnDespawning", function()
+
+end)
+
+entity:SetCallback("OnDespawned", function()
+
+end)
+
+entity:SetCallback("OnKillPlayer", function()
+	wait(1)
+	game:Shutdown()
+end)
+
+---====== Run Entity ======---
+
+entity:Run(true)
